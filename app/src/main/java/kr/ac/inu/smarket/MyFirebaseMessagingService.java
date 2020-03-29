@@ -40,8 +40,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "MyFirebaseMsgService";
 
     //푸시 알림 설정
-    private String title = "";
-    private String body = "";
     private String color = "";
     private String pushToken = "";
 
@@ -55,18 +53,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
-            title = remoteMessage.getNotification().getTitle();
-            body = remoteMessage.getNotification().getBody();
-            color = remoteMessage.getNotification().getColor();
-
-            if (/* Check if data needs to be processed by long running job */ true) {
-                // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
-                scheduleJob();
-            } else {
-                // Handle message within 10 seconds
-                handleNow();
-        }
-
+            scheduleJob();
+            sendNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("body")); // 수신한 푸시 메시지를 Notification으로 전송하여 띄우게 됨.
         }
 
         //Notification 사용했을때 data 가져오기
@@ -76,7 +64,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getTitle());
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
         }
-        sendNotification(); // 수신한 푸시 메시지를 Notification으로 전송하여 띄우게 됨.
+
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
 
@@ -133,7 +121,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         ((MainActivity)MainActivity.context_main).queue.add(stringRequest);//MainActiviy에 있는 queue에 requestString을 추가
     }
 
-    private void sendNotification() { //Notification으로 전송하는 메소드.
+    private void sendNotification(String title, String body) { //Notification으로 전송하는 메소드.
         if(title == null){
             title = "푸시 알림";
         }
